@@ -23,7 +23,7 @@
         </activity>
 
         <activity
-            android:name=".ui.MessageActivity"
+            android:name=".ui.SendMessageActivity"
             android:exported="false">
             <intent-filter>
                 <action android:name="SEND_MESSAGE_ACTIVITY" />

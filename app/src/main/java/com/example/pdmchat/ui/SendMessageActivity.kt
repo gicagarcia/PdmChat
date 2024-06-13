@@ -1,3 +1,5 @@
+package com.example.pdmchat.ui
+
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.pdmchat.databinding.ActivitySendMessageBinding
@@ -24,8 +26,10 @@ class SendMessageActivity : AppCompatActivity() {
     }
 
     private fun sendMessage() {
-        val recipient = binding.recipientEditText.text.toString().trim()
-        val messageText = binding.messageEditText.text.toString().trim()
+        val recipient = binding.recipientEditText.text.toString()
+        val messageText = binding.messageEditText.text.toString()
+
+        print(messageText)
 
         if (recipient.isNotEmpty() && messageText.isNotEmpty()) {
             val messageId = database.push().key
@@ -36,8 +40,6 @@ class SendMessageActivity : AppCompatActivity() {
                     .addOnCompleteListener {
                         if (it.isSuccessful) {
                             finish()
-                        } else {
-                            // Handle failure
                         }
                     }
             }
