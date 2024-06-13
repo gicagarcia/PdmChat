@@ -18,5 +18,3 @@
         android:src="@android:drawable/ic_input_add"
         android:contentDescription="add_button_description" />
 </androidx.appcompat.widget.Toolbar>
-
-
