@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.pdmchat.databinding.ActivitySendMessageBinding
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.auth.FirebaseAuth
 
 class SendMessageActivity : AppCompatActivity() {
 
@@ -26,14 +27,13 @@ class SendMessageActivity : AppCompatActivity() {
     }
 
     private fun sendMessage() {
-        val recipient = binding.recipientEditText.text.toString()
-        val messageText = binding.messageEditText.text.toString()
-
-        print(messageText)
+        val recipient = binding.recipientEditText.text.toString().trim()
+        val messageText = binding.messageEditText.text.toString().trim()
 
         if (recipient.isNotEmpty() && messageText.isNotEmpty()) {
             val messageId = database.push().key
-            val message = Message("sender_id", messageText, System.currentTimeMillis())
+            val senderId = getCurrentUserId()
+            val message = Message(senderId, recipient, messageText, System.currentTimeMillis())
 
             messageId?.let {
                 database.child(recipient).child(it).setValue(message)
@@ -44,5 +44,10 @@ class SendMessageActivity : AppCompatActivity() {
                     }
             }
         }
+    }
+
+    private fun getCurrentUserId(): String {
+        val user = FirebaseAuth.getInstance().currentUser
+        return user?.uid ?: "anonymous"
     }
 }

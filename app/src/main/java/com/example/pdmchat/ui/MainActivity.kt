@@ -5,7 +5,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.database.*
 import com.example.pdmchat.databinding.ActivityMainBinding
-import com.google.firebase.database.DatabaseReference
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,21 +32,28 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun loadMessages() {
-        val userId = "user_id" // substitua pelo ID do usuário atual
-        database.child(userId).addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                messages.clear()
-                for (messageSnapshot in snapshot.children) {
-                    val message = messageSnapshot.getValue(Message::class.java)
-                    message?.let { messages.add(it) }
+        val userId = getCurrentUserId()
+        if (userId != null) {
+            database.child(userId).addValueEventListener(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    messages.clear()
+                    for (messageSnapshot in snapshot.children) {
+                        val message = messageSnapshot.getValue(Message::class.java)
+                        message?.let { messages.add(it) }
+                    }
+                    messages.sortByDescending { it.timestamp }
+                    adapter.notifyDataSetChanged()
                 }
-                messages.sortByDescending { it.timestamp }
-                adapter.notifyDataSetChanged()
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                // Handle database error
-            }
-        })
+                override fun onCancelled(error: DatabaseError) {
+                    // Handle database error
+                }
+            })
+        }
+    }
+
+    private fun getCurrentUserId(): String? {
+        val user = FirebaseAuth.getInstance().currentUser
+        return user?.uid
     }
 }
